@@ -4,21 +4,23 @@ const url = "https://thread-apricot-index.glitch.me/cards/";
 document.querySelector("#new").addEventListener("click", () => {
     fetch(url, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({"ownerKey": ownerKey})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "ownerKey": ownerKey })
     }).then(async function (response) {
-        console.log(await response.json());
+        getData();
     })
 })
 
-fetch(url + ownerKey).then(async function (response) {
-    render(await response.json())
-})
-
+function getData() {
+    fetch(url + ownerKey).then(async function (response) {
+        render(await response.json())
+    })
+}
+getData();
 function render(cards) {
     let tbody = document.querySelector("tbody");
     tbody.innerHTML = null;
-    
+
     for (const card of cards) {
         let formattedNumber = card.cardNumber.match(/.{1,4}/g).join(" ");
         tbody.innerHTML += `
@@ -29,16 +31,25 @@ function render(cards) {
                 <td>${card.balance}₴</td>
                 <td><input type="password" value="${card.cvv}" readonly></td>
                 <td>
-                    <button class="btn btn-warning">
+                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-danger">
+                    <button class="btn btn-danger" 
+                    onclick="deleteCard('${card.cardNumber}')">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </td>
             <tr>
         `
     }
+}
+
+function deleteCard(number) {
+    fetch(url + number, {
+        method: "DELETE"
+    }).then(async function (response) {
+        getData();
+    })
 }
