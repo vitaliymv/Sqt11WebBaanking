@@ -34,7 +34,7 @@ function render(cards) {
                     <i class="fa-solid fa-eye fa-lg position-absolute top-50 ms-3" style="cursor: pointer;"></i>
                 </td>
                 <td>
-                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button onclick="setNumber('${card.cardNumber}')" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </td>
@@ -48,6 +48,29 @@ function render(cards) {
         `
     }
 }
+
+let hiddenNumber = document.querySelector("#card-number");
+function setNumber(number) {
+    hiddenNumber.value = number;
+}
+
+let form = document.querySelector("#form");
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    let number = hiddenNumber.value;
+    let amount = event.target["amount"].value;
+    let choice = Array.from(event.target["type"]).find(radio => radio.checked);
+    if (amount < 0) amount = Math.abs(amount);
+    if (choice.id == "withdraw") amount *= -1;
+
+    fetch(url + number + "/balance", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "amount": amount })
+    }).then(async  function (response) {
+        getData();
+    })
+})
 
 function deleteCard(number) {
     fetch(url + number, {
