@@ -29,7 +29,10 @@ function render(cards) {
                 <td>${formattedNumber}</td>
                 <td>${card.expireDate}</td>
                 <td>${card.balance}₴</td>
-                <td><input type="password" value="${card.cvv}" readonly></td>
+                <td class="position-relative">
+                    <input type="password" value="${card.cvv}" readonly id="cvv-input">
+                    <i class="fa-solid fa-eye fa-lg position-absolute top-50 ms-3" style="cursor: pointer;"></i>
+                </td>
                 <td>
                     <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <i class="fa-solid fa-pen-to-square"></i>
