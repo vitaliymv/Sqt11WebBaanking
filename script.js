@@ -30,8 +30,8 @@ function render(cards) {
                 <td>${card.expireDate}</td>
                 <td>${card.balance}₴</td>
                 <td class="position-relative">
-                    <input type="password" value="${card.cvv}" readonly id="cvv-input">
-                    <i class="fa-solid fa-eye fa-lg position-absolute top-50 ms-3" style="cursor: pointer;"></i>
+                    <input type="password" value="${card.cvv}" readonly id="input-${card.cvv}">
+                    <i class="fa-solid fa-eye fa-lg position-absolute top-50 ms-3" id="${card.cvv}" style="cursor: pointer;"></i>
                 </td>
                 <td>
                     <button onclick="setNumber('${card.cardNumber}')" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -45,8 +45,21 @@ function render(cards) {
                     </button>
                 </td>
             <tr>
-        `
+        `;
     }
+    let eye = document.querySelectorAll(".fa-eye");
+    Array.from(eye).forEach(item => item.addEventListener("mouseenter", show));
+    Array.from(eye).forEach(item => item.addEventListener("mouseleave", hide));
+}
+
+function show() {
+    let idInput = "input-" + this.id;
+    document.querySelector(`#${idInput}`).type = "text";
+}
+
+function hide() {
+    let idInput = "input-" + this.id;
+    document.querySelector(`#${idInput}`).type = "password";
 }
 
 let hiddenNumber = document.querySelector("#card-number");
@@ -76,6 +89,9 @@ function deleteCard(number) {
     fetch(url + number, {
         method: "DELETE"
     }).then(async function (response) {
+        let data = await response.json();
+        if (response.status == 403) return alert(data.error);
+        alert(data.message)
         getData();
     })
 }
